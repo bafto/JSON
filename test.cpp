@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include "json.h"
 
 struct Dog
@@ -34,26 +35,6 @@ struct Dog
 
 int main() 
 {
-	// how should the api look:
-	/*
-	json::Object obj = json::toJson(some_object);
-	Some_Type some_other_object = json::fromJson(obj);
-
-	obj["property"] = some_value;
-	std::string str = obj["string_property"];
-	int i = obj["int_property"];
-	*/
-
-	/*Dog dog1("tim", 10, true);
-	json::Object obj = dog1.toJson();
-	json::Object obj2 = obj;
-	Dog dog2(obj2);
-
-	std::cout << (dog1 == dog2);
-	if (obj.hasProperty("name")) {
-		std::cout << "\n" << obj;
-	}*/
-
 	json::Object obj1 = {
 		{"name", "tom"},
 		{"age", 17},
@@ -110,7 +91,7 @@ int main()
 )";
 
 	std::cout << json::parse(jsonstr).value_or(("invalid json")).to_string("  ") << "\n\n"
-		<< json::parse(jsonstr).value_or(("invalid json")).to_string("  ") << "\n\n"
+		<< json::parseFile("test.json").value_or(("unable to parse file")).to_string("  ") << "\n\n"
 		<< json::parse(jsonarr).value_or(("invalid json")).to_string("  ");
 
 	return 0;

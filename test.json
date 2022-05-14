@@ -1,0 +1,20 @@
+[
+	{
+		"name": "tim",
+		"age": 15,
+		"goodBoi"   :	true,
+		"sister": {
+			"name": "jenny"  ,
+			"age": 13,
+			"goodGirl": true
+		},
+		"orphan": {}
+	},
+	12,
+	22.456,
+	"hello",
+	[
+		"hello",
+		true
+	]
+]

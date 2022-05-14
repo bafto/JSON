@@ -1,5 +1,6 @@
 #include "json.h"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <string_view>
 #include <regex>
@@ -251,7 +252,7 @@ namespace json
 		case 0:
 			return "null";
 		case 1:
-			return (std::string)*this;
+			return '"'+(std::string)*this+'"';
 		case 2:
 			return std::to_string((int)*this);
 		case 3:
@@ -499,6 +500,12 @@ namespace json
 			return opt.value().first;
 		}
 		return {};
+	}
+	std::optional<Value> parseFile(const std::string& filename)
+	{
+		std::ifstream istr(filename);
+		std::string file((std::istreambuf_iterator<char>(istr)), std::istreambuf_iterator<char>());
+		return parse(file);
 	}
 }
 

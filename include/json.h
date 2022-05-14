@@ -143,6 +143,7 @@ namespace json
 	Value toJsonValue<Null>(const Null& val);
 
 	std::optional<Value> parse(std::string_view str);
+	std::optional<Value> parseFile(const std::string& filename);
 } // namespace json
 
 std::ostream& operator<<(std::ostream&, json::Value);
