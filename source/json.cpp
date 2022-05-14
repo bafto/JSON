@@ -28,20 +28,45 @@ namespace json
 		return properties.find(std::move(str)) != properties.end();
 	}
 
-	std::string Object::to_string(const std::string& seperator) const
+	static std::string repeatstr(const std::string& str, size_t n)
+	{
+		std::string ret;
+		for (size_t i = 0; i < n; i++)
+			ret += str;
+		return ret;
+	}
+
+	static int indentLevel = 0; // used for Object::to_string and ArrayToString
+
+	std::string Object::to_string(const std::string& indent) const
 	{
 		if (properties.empty())
 			return "{}";
 
 		std::string ret;
-		ret += "{\n";
-		for (const auto& property : properties)
+
+		if (indent.empty())
 		{
-			ret += seperator + property.first + "\": " + property.second.to_string() + ",\n";
+			ret += "{";
+			for (const auto& property : properties)
+			{
+				ret += '"' + property.first + "\":" + property.second.to_string("") + ',';
+			}
+			ret[ret.length()-1] = '}'; // set the trailing , to }
 		}
-		ret.pop_back(); ret.pop_back();
-		ret += "\n";
-		ret += "}";
+		else
+		{
+			ret += "{\n";
+			for (const auto& property : properties)
+			{
+				indentLevel++;
+				ret += repeatstr(indent, indentLevel) + '"' + property.first + "\": " + property.second.to_string(indent) + ",\n";
+				indentLevel--;
+			}
+			ret.erase(ret.end() - 2, ret.end()); // remove trailing ,\n
+			ret += "\n" + repeatstr(indent, indentLevel) + "}";
+		}
+
 		return ret;
 	}
 
@@ -187,7 +212,39 @@ namespace json
 		return fromJsonValue<Null>(*this);
 	}
 
-	std::string Value::to_string() const
+	static std::string ArrayToString(const Array& arr, const std::string& indent = "\t")
+	{
+		if (arr.empty())
+			return "[]";
+
+		std::string ret;
+
+		if (indent.empty())
+		{
+			ret += "[";
+			for (const auto& value : arr)
+			{
+				ret += value.to_string("") + ',';
+			}
+			ret[ret.length() - 1] = ']'; // set the trailing , to ]
+		}
+		else
+		{
+			ret += "[\n";
+			for (const auto& value : arr)
+			{
+				indentLevel++; // indent level is defined above Object::to_string
+				ret += repeatstr(indent, indentLevel) + value.to_string(indent) + ",\n";
+				indentLevel--;
+			}
+			ret.erase(ret.end() - 2, ret.end()); // remove trailing ,\n
+			ret += "\n" + repeatstr(indent, indentLevel) + "]";
+		}
+
+		return ret;
+	}
+
+	std::string Value::to_string(const std::string& indent) const
 	{
 		switch (value.index())
 		{
@@ -200,17 +257,11 @@ namespace json
 		case 3:
 			return std::to_string((float)*this);
 		case 4:
-			return std::to_string((bool)*this);
+			return ((bool)*this) ? "true" : "false";
 		case 5:
-			return ((Object)*this).to_string();
+			return ((Object)*this).to_string(indent);
 		case 6:
-			std::string ret = "[";
-			for (const auto& val : (Array)*this)
-			{
-				ret += val.to_string() + ",";
-			}
-			ret += "]";
-			return ret;
+			return ArrayToString(((Array)*this), indent);
 		}
 		return ""; // unreachable
 	}

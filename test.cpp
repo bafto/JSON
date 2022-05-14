@@ -75,7 +75,12 @@ int main()
 		"sister": {
 			"name": "jenny"  ,
 			"age": 13,
-			"goodGirl": true
+			"goodGirl": true,
+			"friend": {
+					"name": "julia",
+					"age": 14,
+					"goodGirl": true
+				}
 		},
 		"orphan": {}
 	}
@@ -104,8 +109,9 @@ int main()
 	]
 )";
 
-	std::cout << json::parse(jsonstr).value_or(("invalid json")) << "\n\n"
-		<< json::parse(jsonarr).value_or(("invalid json"));
+	std::cout << json::parse(jsonstr).value_or(("invalid json")).to_string("  ") << "\n\n"
+		<< json::parse(jsonstr).value_or(("invalid json")).to_string("  ") << "\n\n"
+		<< json::parse(jsonarr).value_or(("invalid json")).to_string("  ");
 
 	return 0;
 }

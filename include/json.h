@@ -38,7 +38,7 @@ namespace json
 		const Value& operator[](std::string str) const;
 
 		bool hasProperty(std::string str) const;
-		std::string to_string(const std::string& seperator = "\t") const;
+		std::string to_string(const std::string& indent = "\t") const;
 	public:
 		std::map<std::string, Value> properties;
 	};
@@ -102,7 +102,7 @@ namespace json
 		explicit operator Array() const;
 		explicit operator Null() const;
 
-		std::string to_string() const;
+		std::string to_string(const std::string& indent = "\t") const;
 		Type type() const;
 	};
 
